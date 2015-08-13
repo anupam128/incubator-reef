@@ -16,29 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.reef.wake.remote;
+package org.apache.reef.driver.parameters;
 
-import org.apache.reef.wake.remote.address.LocalAddressProvider;
-import org.apache.reef.wake.remote.address.LocalAddressProviderFactory;
+import org.apache.reef.tang.annotations.Name;
+import org.apache.reef.tang.annotations.NamedParameter;
 
 /**
- * @deprecated Use <code>org.apache.reef.wake.remote.address.LocalAddressProvider</code> instead.
+ * Whether the resource manager should preserve evaluators on job driver failure.
  */
-@Deprecated
-public final class NetUtils {
-  private static final LocalAddressProvider LOCAL_ADDRESS_PROVIDER = LocalAddressProviderFactory.getInstance();
-
-  /**
-   * @deprecated Use <code>org.apache.reef.wake.remote.address.LocalAddressProvider#getLocalAddress()</code> instead.
-   */
-  @Deprecated
-  public static String getLocalAddress() {
-    return LOCAL_ADDRESS_PROVIDER.getLocalAddress();
-  }
-
-  /**
-   * Empty private constructor to prohibit instantiation of utility class.
-   */
-  private NetUtils() {
+@NamedParameter(doc = "The number of times the resource manager should attempt to submit the application.",
+    default_value = "1")
+public final class MaxApplicationSubmissions implements Name<Integer> {
+  private MaxApplicationSubmissions() {
   }
 }

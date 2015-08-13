@@ -22,7 +22,7 @@ under the License.
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.reef</groupId>
-    <version>0.12.0-incubating-SNAPSHOT</version>
+    <version>0.13.0-incubating-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>REEF</name>
     <artifactId>reef-project</artifactId>
@@ -247,6 +247,9 @@ under the License.
                             <exclude>**/*.md</exclude>
                             <!-- The below are sometimes created during tests -->
                             <exclude>REEF_LOCAL_RUNTIME/**</exclude>
+                            <exclude>REEF_MESOS_RUNTIME/**</exclude>
+                            <!-- JVM error logs, especially troublesome on CI servers -->
+                            <exclude>**/hs_err_*.log</exclude>
                             <!-- The Visual Studio and Nuget build files -->
                             <exclude>**/*.sln*</exclude>
                             <exclude>**/*.vcxproj*</exclude>

@@ -1,4 +1,4 @@
-﻿/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,18 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.reef.driver.parameters;
 
-using Org.Apache.REEF.Tang.Annotations;
-using Org.Apache.REEF.Wake.StreamingCodec;
+import org.apache.reef.tang.annotations.Name;
+import org.apache.reef.tang.annotations.NamedParameter;
 
-namespace Org.Apache.REEF.IMRU.API.Parameters
-{
-    /// <summary>
-    /// The codec to be used for the result.
-    /// </summary>
-    /// <typeparam name="TResult"></typeparam>
-    [NamedParameter("The codec to be used for the result.")]
-    public class ResultCodec<TResult> : Name<IStreamingCodec<TResult>>
-    {
-    }
+/**
+ * Whether the resource manager should preserve evaluators on job driver failure.
+ */
+@NamedParameter(doc = "Whether the resource manager should preserve evaluators" +
+    " on job driver failure.", default_value = "false")
+public final class ResourceManagerPreserveEvaluators implements Name<Boolean> {
+  private ResourceManagerPreserveEvaluators() {
+  }
 }

@@ -27,7 +27,7 @@ namespace Org.Apache.REEF.IMRU.API
     /// <typeparam name="TMapInput">The type of the side information provided to the Map function</typeparam>
     /// <typeparam name="TMapOutput">The return type of the Map function</typeparam>
     /// <typeparam name="TResult">The return type of the computation.</typeparam>
-    public interface IIMRUClient<TMapInput, TMapOutput, TResult>
+    public interface IIMRUClient<TMapInput, TMapOutput, out TResult>
     {
         /// <summary>
         /// Submit the given job for execution.

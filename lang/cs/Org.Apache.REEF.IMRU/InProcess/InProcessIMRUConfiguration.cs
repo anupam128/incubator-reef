@@ -37,6 +37,9 @@ namespace Org.Apache.REEF.IMRU.InProcess
         /// </summary>
         public static readonly OptionalParameter<int> NumberOfMappers = new OptionalParameter<int>();
 
+        /// <summary>
+        /// Configuration module
+        /// </summary>
         public static ConfigurationModule ConfigurationModule =
             new InProcessIMRUConfiguration<TMapInput, TMapOutput, TResult>()
                 .BindImplementation(GenericType<IIMRUClient<TMapInput, TMapOutput, TResult>>.Class,
