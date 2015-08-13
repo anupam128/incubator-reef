@@ -71,6 +71,8 @@ under the License.
   <PropertyGroup>
     <!--The root directory of the REEF source tree. -->
     <REEF_Source_Folder>$([System.IO.Path]::GetFullPath($(SolutionDir)\..\..))</REEF_Source_Folder>
+	<!--Path to StyleCop target for MSBuild integration of StyleCop. -->
+    <StyleCop_Target>$(SolutionDir)\ExternalTools\StyleCop\4.7\StyleCop.Targets</StyleCop_Target>
   </PropertyGroup>
 
   <!--
