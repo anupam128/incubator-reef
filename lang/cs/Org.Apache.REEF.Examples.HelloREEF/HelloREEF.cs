@@ -65,7 +65,7 @@ namespace Org.Apache.REEF.Examples.HelloREEF
                 .SetJobIdentifier("HelloREEF")
                 .Build();
 
-            _reefClient.SubmitAndGetJobStatus(helloJobSubmission);
+            _reefClient.Submit(helloJobSubmission);
         }
 
         /// <summary>

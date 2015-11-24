@@ -35,7 +35,7 @@ namespace Org.Apache.REEF.Client.Yarn
         public static readonly OptionalParameter<string> SecurityTokenService = new OptionalParameter<string>();
 
         public static ConfigurationModule ConfigurationModule = new YARNClientConfiguration()
-            .BindImplementation(GenericType<IREEFClient>.Class, GenericType<YarnREEFClient>.Class)
+            .BindImplementation(GenericType<IREEFClient>.Class, GenericType<YarnREEFDotNetClient>.Class)
             .BindNamedParameter(GenericType<JobSubmissionDirectoryPrefixParameter>.Class, JobSubmissionFolderPrefix)
             .BindNamedParameter(GenericType<SecurityTokenKindParameter>.Class, SecurityTokenKind)
             .BindNamedParameter(GenericType<SecurityTokenServiceParameter>.Class, SecurityTokenService)

@@ -123,7 +123,7 @@ namespace Org.Apache.REEF.Client.Yarn.RestClient
                 RootElement = rootElement,
                 Method = method,
                 RequestFormat = DataFormat.Json,
-                JsonSerializer = new RestJsonSerializer()
+                JsonSerializer = new RestJsonSerializer(),
             };
 
             return request;
