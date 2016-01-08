@@ -20,10 +20,11 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Org.Apache.REEF.Client.YARN.RestClient;
 using Org.Apache.REEF.Client.YARN.RestClient.DataModel;
 using Org.Apache.REEF.Tang.Annotations;
+using Org.Apache.REEF.Utilities.AsyncUtils;
 using Org.Apache.REEF.Utilities.Logging;
-using RestSharp;
 
 namespace Org.Apache.REEF.Client.Yarn.RestClient
 {
@@ -48,11 +49,11 @@ namespace Org.Apache.REEF.Client.Yarn.RestClient
 
             var response =
                 await
-                    client.ExecuteTaskAsync<T>(request, cancellationToken);
+                    client.ExecuteRequestAsync<T>(request, cancellationToken);
 
-            if (response.ErrorException != null)
+            if (response.Exception != null)
             {
-                throw new YarnRestAPIException("Executing REST API failed", response.ErrorException);
+                throw new YarnRestAPIException("Executing REST API failed", response.Exception);
             }
 
             try
@@ -75,13 +76,13 @@ namespace Org.Apache.REEF.Client.Yarn.RestClient
             return response.Data;
         }
 
-        public async Task<IRestResponse> ExecuteAsync(IRestRequest request, Uri uri, CancellationToken cancellationToken)
+        public async Task<IRestResponse<VoidResult>> ExecuteAsync(IRestRequest request, Uri uri, CancellationToken cancellationToken)
         {
             var client = _clientFactory.CreateRestClient(uri);
 
             try
             {
-                return await client.ExecuteTaskAsync(request, cancellationToken);
+                return await client.ExecuteRequestAsync<VoidResult>(request, cancellationToken);
             }
             catch (Exception exception)
             {

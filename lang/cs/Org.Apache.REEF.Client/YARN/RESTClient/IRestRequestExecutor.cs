@@ -18,8 +18,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Org.Apache.REEF.Client.YARN.RestClient;
 using Org.Apache.REEF.Tang.Annotations;
-using RestSharp;
+using Org.Apache.REEF.Utilities.AsyncUtils;
 
 namespace Org.Apache.REEF.Client.Yarn.RestClient
 {
@@ -31,7 +32,7 @@ namespace Org.Apache.REEF.Client.Yarn.RestClient
             Uri uri,
             CancellationToken cancellationToken) where T : new();
 
-        Task<IRestResponse> ExecuteAsync(
+        Task<IRestResponse<VoidResult>> ExecuteAsync(
             IRestRequest request,
             Uri uri,
             CancellationToken cancellationToken);

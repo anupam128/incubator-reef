@@ -41,11 +41,7 @@ namespace Org.Apache.REEF.Client.Yarn.RestClient
             // as one client can contact only one baseUri.
             // This is not very bad but it might still be worth
             // it to cache clients per baseUri in the future.
-            var restClient = new RestSharp.RestClient(baseUri)
-            {
-                FollowRedirects = true
-            };
-            restClient.AddHandler("application/json", new RestJsonDeserializer());
+            var restClient = new RestClient(baseUri);
             return restClient;
         }
     }
