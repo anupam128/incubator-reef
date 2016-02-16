@@ -19,7 +19,7 @@ using Org.Apache.REEF.Tang.Annotations;
 
 namespace Org.Apache.REEF.Client.YARN.Parameters
 {
-    [NamedParameter("Directory used to upload job resources from the client", defaultValue: @"/vol1/tmp")]
+    [NamedParameter("Directory used to upload job resources from the client", defaultValue: @"/reefdev/vol1/tmp")]
     public class JobSubmissionDirectoryPrefixParameter : Name<string>
     {
     }

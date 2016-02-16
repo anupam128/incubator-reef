@@ -24,7 +24,7 @@ namespace Org.Apache.REEF.Client.Yarn
     /// Helper methods to interact with the YARN command line.
     /// </summary>
     [DefaultImplementation(typeof(YarnCommandLineEnvironment))]
-    internal interface IYarnCommandLineEnvironment
+    public interface IYarnCommandLineEnvironment
     {
         /// <summary>
         /// Returns the class path returned by `yarn classpath`.

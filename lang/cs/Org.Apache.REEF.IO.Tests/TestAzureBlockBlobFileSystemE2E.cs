@@ -41,7 +41,7 @@ namespace Org.Apache.REEF.IO.Tests
         public TestAzureBlockBlobFileSystemE2E()
         {
             // Fill in before running test!
-            const string connectionString = "DefaultEndpointsProtocol=http;AccountName=myAccount;AccountKey=myKey;";
+            const string connectionString = "DefaultEndpointsProtocol=https;AccountName=reefhdi;AccountKey=fwaTXTQHP21kaHhSAPCeaUexRV3gm5ZjxGX5s4wmMeOzPy3gNVh/zKxqUBYHZiLfDYGFo6qnjviRTTqO9bV0pA==";
             var defaultContainerName = "reef-test-container-" + Guid.NewGuid();
             var conf = AzureBlockBlobFileSystemConfiguration.ConfigurationModule
                 .Set(AzureBlockBlobFileSystemConfiguration.ConnectionString, connectionString)
@@ -60,7 +60,7 @@ namespace Org.Apache.REEF.IO.Tests
             }
         }
 
-        [Fact(Skip = "Fill in credentials before running test")]
+        [Fact]
         public void TestDeleteE2E()
         {
             var blob = _container.GetBlockBlobReference(HelloFile);
@@ -70,7 +70,7 @@ namespace Org.Apache.REEF.IO.Tests
             Assert.False(blob.Exists());
         }
 
-        [Fact(Skip = "Fill in credentials before running test")]
+        [Fact]
         public void TestExistsE2E()
         {
             var helloFilePath = PathToFile(HelloFile);
@@ -81,7 +81,7 @@ namespace Org.Apache.REEF.IO.Tests
             Assert.False(_fileSystem.Exists(helloFilePath));
         }
 
-        [Fact(Skip = "Fill in credentials before running test")]
+        [Fact]
         public void TestCopyE2E()
         {
             const string srcFileName = "src";
@@ -101,7 +101,7 @@ namespace Org.Apache.REEF.IO.Tests
             Assert.Equal(_container.GetBlockBlobReference(srcFileName).DownloadText(), _container.GetBlockBlobReference(destFileName).DownloadText());
         }
 
-        [Fact(Skip = "Fill in credentials before running test")]
+        [Fact]
         public void TestCopyToLocalE2E()
         {
             var helloFilePath = PathToFile(HelloFile);
@@ -121,7 +121,7 @@ namespace Org.Apache.REEF.IO.Tests
             }
         }
 
-        [Fact(Skip = "Fill in credentials before running test")]
+        [Fact]
         public void TestCopyFromLocalE2E()
         {
             var helloFilePath = PathToFile(HelloFile);
@@ -153,14 +153,14 @@ namespace Org.Apache.REEF.IO.Tests
             }
         }
 
-        [Fact(Skip = "Fill in credentials before running test")]
+        [Fact]
         public void TestDeleteDirectoryAtContainerE2E()
         {
             _fileSystem.DeleteDirectory(_container.Uri);
             Assert.False(_container.Exists());
         }
 
-        [Fact(Skip = "Fill in credentials before running test")]
+        [Fact]
         public void TestDeleteDirectoryFirstLevelE2E()
         {
             const string directory = "dir";
@@ -185,7 +185,7 @@ namespace Org.Apache.REEF.IO.Tests
             Assert.True(_container.Exists());
         }
 
-        [Fact(Skip = "Fill in credentials before running test")]
+        [Fact]
         public void TestDeleteDirectorySecondLevelE2E()
         {
             const string directory1 = "dir1";

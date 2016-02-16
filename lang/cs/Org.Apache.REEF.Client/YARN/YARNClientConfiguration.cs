@@ -16,6 +16,7 @@
 // under the License.
 
 using Org.Apache.REEF.Client.API;
+using Org.Apache.REEF.Client.Yarn.RestClient;
 using Org.Apache.REEF.Client.YARN;
 using Org.Apache.REEF.Client.YARN.Parameters;
 using Org.Apache.REEF.Client.YARN.RestClient;
@@ -34,10 +35,16 @@ namespace Org.Apache.REEF.Client.Yarn
         public static readonly OptionalParameter<string> SecurityTokenKind = new OptionalParameter<string>();
         public static readonly OptionalParameter<string> SecurityTokenService = new OptionalParameter<string>();
         public static readonly OptionalImpl<IYarnRestClientCredential> YarnRestClientCredential = new OptionalImpl<IYarnRestClientCredential>();
+        public static readonly OptionalImpl<IUrlProvider> YarnRmUrlProvider = new OptionalImpl<IUrlProvider>();
+        public static readonly OptionalImpl<IJobResourceUploader> JobResourceUploader = new OptionalImpl<IJobResourceUploader>();
+        public static readonly OptionalImpl<IYarnCommandLineEnvironment> YarnCommandLineEnvironment = new OptionalImpl<IYarnCommandLineEnvironment>();
 
         public static ConfigurationModule ConfigurationModule = new YARNClientConfiguration()
             .BindImplementation(GenericType<IREEFClient>.Class, GenericType<YarnREEFClient>.Class)
             .BindImplementation(GenericType<IYarnRestClientCredential>.Class, YarnRestClientCredential)
+            .BindImplementation(GenericType<IUrlProvider>.Class, YarnRmUrlProvider)
+            .BindImplementation(GenericType<IJobResourceUploader>.Class, JobResourceUploader)
+            .BindImplementation(GenericType<IYarnCommandLineEnvironment>.Class, YarnCommandLineEnvironment)
             .BindNamedParameter(GenericType<JobSubmissionDirectoryPrefixParameter>.Class, JobSubmissionFolderPrefix)
             .BindNamedParameter(GenericType<SecurityTokenKindParameter>.Class, SecurityTokenKind)
             .BindNamedParameter(GenericType<SecurityTokenServiceParameter>.Class, SecurityTokenService)
@@ -48,6 +55,9 @@ namespace Org.Apache.REEF.Client.Yarn
         public static ConfigurationModule ConfigurationModuleYARNRest = new YARNClientConfiguration()
             .BindImplementation(GenericType<IREEFClient>.Class, GenericType<YarnREEFDotNetClient>.Class)
             .BindImplementation(GenericType<IYarnRestClientCredential>.Class, YarnRestClientCredential)
+            .BindImplementation(GenericType<IUrlProvider>.Class, YarnRmUrlProvider)
+            .BindImplementation(GenericType<IJobResourceUploader>.Class, JobResourceUploader)
+            .BindImplementation(GenericType<IYarnCommandLineEnvironment>.Class, YarnCommandLineEnvironment)
             .BindNamedParameter(GenericType<JobSubmissionDirectoryPrefixParameter>.Class, JobSubmissionFolderPrefix)
             .BindNamedParameter(GenericType<SecurityTokenKindParameter>.Class, SecurityTokenKind)
             .BindNamedParameter(GenericType<SecurityTokenServiceParameter>.Class, SecurityTokenService)

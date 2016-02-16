@@ -16,11 +16,20 @@
 // under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using Org.Apache.REEF.Client.API;
 using Org.Apache.REEF.Client.Local;
 using Org.Apache.REEF.Client.Yarn;
+using Org.Apache.REEF.Client.Yarn.RestClient;
+using Org.Apache.REEF.Client.YARN;
+using Org.Apache.REEF.Client.YARN.RestClient;
 using Org.Apache.REEF.Driver;
+using Org.Apache.REEF.IO.FileSystem.AzureBlob;
 using Org.Apache.REEF.Tang.Annotations;
+using Org.Apache.REEF.Tang.Implementations.Configuration;
 using Org.Apache.REEF.Tang.Implementations.Tang;
 using Org.Apache.REEF.Tang.Interface;
 using Org.Apache.REEF.Tang.Util;
@@ -37,6 +46,7 @@ namespace Org.Apache.REEF.Examples.HelloREEF
         private const string Local = "local";
         private const string YARN = "yarn";
         private const string YARNRest = "yarnrest";
+        private const string HDInsight = "hdi";
         private readonly IREEFClient _reefClient;
         private readonly JobSubmissionBuilderFactory _jobSubmissionBuilderFactory;
 
@@ -84,6 +94,22 @@ namespace Org.Apache.REEF.Examples.HelloREEF
                     return YARNClientConfiguration.ConfigurationModule.Build();
                 case YARNRest:
                     return YARNClientConfiguration.ConfigurationModuleYARNRest.Build();
+                case HDInsight:
+                    const string connectionString =
+                        "DefaultEndpointsProtocol=https;AccountName=reefhdi;AccountKey=fwaTXTQHP21kaHhSAPCeaUexRV3gm5ZjxGX5s4wmMeOzPy3gNVh/zKxqUBYHZiLfDYGFo6qnjviRTTqO9bV0pA==";
+                    var azureBlockBlobConfig = AzureBlockBlobFileSystemConfiguration.ConfigurationModule
+                        .Set(AzureBlockBlobFileSystemConfiguration.ConnectionString, connectionString)
+                        .Build();
+                    var yarnClientConfig = YARNClientConfiguration.ConfigurationModuleYARNRest
+                        .Set(YARNClientConfiguration.YarnRestClientCredential,
+                            GenericType<HDInsightTestCredential>.Class)
+                        .Set(YARNClientConfiguration.YarnRmUrlProvider, GenericType<HDInsightRMUrlProvider>.Class)
+                        .Set(YARNClientConfiguration.JobResourceUploader, GenericType<FileSystemJobResourceUploader>.Class)
+                        .Set(YARNClientConfiguration.YarnCommandLineEnvironment, GenericType<HDInsightCommandLineEnvironment>.Class)
+                        .Build();
+                    return Configurations.Merge(
+                        yarnClientConfig,
+                        azureBlockBlobConfig);
                 default:
                     throw new Exception("Unknown runtime: " + name);
             }
@@ -92,6 +118,38 @@ namespace Org.Apache.REEF.Examples.HelloREEF
         public static void Main(string[] args)
         {
             TangFactory.GetTang().NewInjector(GetRuntimeConfiguration(args.Length > 0 ? args[0] : Local)).GetInstance<HelloREEF>().Run();
+        }
+
+        public class HDInsightTestCredential : IYarnRestClientCredential
+        {
+            private const string UserName = @"reefdev";
+            private const string Password = @"Coffee@@2015"; // TODO: Do not checkin!!!
+            private readonly ICredentials _credentials = new NetworkCredential(UserName, Password);
+
+            [Inject]
+            private HDInsightTestCredential()
+            {
+            }
+
+            public ICredentials Credentials
+            {
+                get { return _credentials; }
+            }
+        }
+
+        public class HDInsightRMUrlProvider : IUrlProvider
+        {
+            private const string HDInsightUrl = "https://reefdev.azurehdinsight.net/";
+
+            [Inject]
+            private HDInsightRMUrlProvider()
+            {
+            }
+
+            public Task<IEnumerable<Uri>> GetUrlAsync()
+            {
+                return Task.FromResult(Enumerable.Repeat(new Uri(HDInsightUrl), 1));
+            }
         }
     }
 }

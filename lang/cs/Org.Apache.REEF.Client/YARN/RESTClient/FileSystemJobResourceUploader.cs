@@ -16,7 +16,6 @@
 // under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Org.Apache.REEF.Client.Common;
 using Org.Apache.REEF.Client.Yarn;
@@ -24,6 +23,7 @@ using Org.Apache.REEF.Client.YARN.RestClient.DataModel;
 using Org.Apache.REEF.Common.Files;
 using Org.Apache.REEF.IO.FileSystem;
 using Org.Apache.REEF.Tang.Annotations;
+using Org.Apache.REEF.Utilities.Attributes;
 using Org.Apache.REEF.Utilities.Diagnostics;
 using Org.Apache.REEF.Utilities.Logging;
 
@@ -34,14 +34,15 @@ namespace Org.Apache.REEF.Client.YARN.RestClient
     /// User can provide custom implementation of
     /// <see cref="IFileSystem"/> for their choice of DFS.
     /// </summary>
-    internal sealed class FileSystemJobResourceUploader : IJobResourceUploader
+    [Unstable("Unstable Implementation")]
+    public sealed class FileSystemJobResourceUploader : IJobResourceUploader
     {
         private static readonly Logger Log = Logger.GetLogger(typeof(FileSystemJobResourceUploader));
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
         private readonly IResourceArchiveFileGenerator _resourceArchiveFileGenerator;
         private readonly IFileSystem _fileSystem;
-        private readonly REEFFileNames _reefFileNames;
         private readonly IFile _file;
+        private REEFFileNames _reefFileNames;
 
         [Inject]
         private FileSystemJobResourceUploader(
@@ -50,9 +51,9 @@ namespace Org.Apache.REEF.Client.YARN.RestClient
             REEFFileNames reefFileNames,
             IFile file)
         {
+            _reefFileNames = reefFileNames;
             _fileSystem = fileSystem;
             _resourceArchiveFileGenerator = resourceArchiveFileGenerator;
-            _reefFileNames = reefFileNames;
             _file = file;
         }
 
@@ -66,7 +67,7 @@ namespace Org.Apache.REEF.Client.YARN.RestClient
             _fileSystem.CreateDirectory(parentDirectoryUri);
 
             var archivePath = _resourceArchiveFileGenerator.CreateArchiveToUpload(driverLocalFolderPath);
-            return GetJobResource(archivePath, ResourceType.ARCHIVE, driverUploadPath);
+            return GetJobResource(archivePath, ResourceType.ARCHIVE, driverUploadPath, _reefFileNames.GetReefFolderName());
         }
 
         public JobResource UploadFileResource(string fileLocalPath, string remoteUploadDirectoryPath)
@@ -78,7 +79,7 @@ namespace Org.Apache.REEF.Client.YARN.RestClient
             return GetJobResource(fileLocalPath, ResourceType.FILE, remoteUploadDirectoryPath);
         }
 
-        private JobResource GetJobResource(string filePath, ResourceType resourceType, string driverUploadPath)
+        private JobResource GetJobResource(string filePath, ResourceType resourceType, string driverUploadPath, string localizedName = null)
         {
             if (!_file.Exists(filePath))
             {
@@ -97,9 +98,9 @@ namespace Org.Apache.REEF.Client.YARN.RestClient
 
             return new JobResource
             {
-                Name = Path.GetFileNameWithoutExtension(filePath),
+                Name = localizedName ?? Path.GetFileName(filePath),
                 LastModificationUnixTimestamp = DateTimeToUnixTimestamp(fileStatus.ModificationTime),
-                RemoteUploadPath = remoteFileUri.AbsoluteUri,
+                RemoteUploadPath = @"wasb://reefdev@reefhdi.blob.core.windows.net" + remoteFileUri.AbsolutePath.Remove(0, 8),
                 ResourceSize = fileStatus.LengthBytes,
                 ResourceType = resourceType
             };
@@ -107,7 +108,7 @@ namespace Org.Apache.REEF.Client.YARN.RestClient
 
         private static long DateTimeToUnixTimestamp(DateTime dateTime)
         {
-            return (long)(dateTime - Epoch).TotalSeconds;
+            return (long)(dateTime - Epoch).TotalMilliseconds;
         }
     }
 }
