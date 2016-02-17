@@ -72,7 +72,6 @@ under the License.
     <Compile Include="Avro\AvroAppSubmissionParameters.cs" />
     <Compile Include="Avro\AvroJobSubmissionParameters.cs" />
     <Compile Include="Avro\Local\AvroLocalAppSubmissionParameters.cs" />
-    <Compile Include="Avro\YARN\AvroClusterAppSubmissionParameters.cs" />
     <Compile Include="Avro\YARN\AvroYarnAppSubmissionParameters.cs" />
     <Compile Include="Avro\YARN\AvroYarnJobSubmissionParameters.cs" />
     <Compile Include="Avro\YARN\AvroYarnClusterJobSubmissionParameters.cs" />
