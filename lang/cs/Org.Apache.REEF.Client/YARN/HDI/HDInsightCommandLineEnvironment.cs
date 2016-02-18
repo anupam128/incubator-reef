@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using Org.Apache.REEF.Client.Yarn;
 using Org.Apache.REEF.Tang.Annotations;
 
-namespace Org.Apache.REEF.Client.YARN
+namespace Org.Apache.REEF.Client.YARN.HDI
 {
     /// <summary>
     /// Provides YARN classpath for HDInsight environment

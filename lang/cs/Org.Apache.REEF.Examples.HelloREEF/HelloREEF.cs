@@ -5,9 +5,9 @@
 // to you under the Apache License, Version 2.0 (the
 // "License"); you may not use this file except in compliance
 // with the License.  You may obtain a copy of the License at
-//
+// 
 //   http://www.apache.org/licenses/LICENSE-2.0
-//
+// 
 // Unless required by applicable law or agreed to in writing,
 // software distributed under the License is distributed on an
 // "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,15 +16,10 @@
 // under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Org.Apache.REEF.Client.API;
 using Org.Apache.REEF.Client.Local;
 using Org.Apache.REEF.Client.Yarn;
-using Org.Apache.REEF.Client.Yarn.RestClient;
-using Org.Apache.REEF.Client.YARN;
+using Org.Apache.REEF.Client.YARN.HDI;
 using Org.Apache.REEF.Client.YARN.RestClient;
 using Org.Apache.REEF.Driver;
 using Org.Apache.REEF.IO.FileSystem.AzureBlob;
@@ -104,8 +99,10 @@ namespace Org.Apache.REEF.Examples.HelloREEF
                         .Set(YARNClientConfiguration.YarnRestClientCredential,
                             GenericType<HDInsightTestCredential>.Class)
                         .Set(YARNClientConfiguration.YarnRmUrlProvider, GenericType<HDInsightRMUrlProvider>.Class)
-                        .Set(YARNClientConfiguration.JobResourceUploader, GenericType<FileSystemJobResourceUploader>.Class)
-                        .Set(YARNClientConfiguration.YarnCommandLineEnvironment, GenericType<HDInsightCommandLineEnvironment>.Class)
+                        .Set(YARNClientConfiguration.JobResourceUploader,
+                            GenericType<FileSystemJobResourceUploader>.Class)
+                        .Set(YARNClientConfiguration.YarnCommandLineEnvironment,
+                            GenericType<HDInsightCommandLineEnvironment>.Class)
                         .Build();
                     return Configurations.Merge(
                         yarnClientConfig,
@@ -117,39 +114,10 @@ namespace Org.Apache.REEF.Examples.HelloREEF
 
         public static void Main(string[] args)
         {
-            TangFactory.GetTang().NewInjector(GetRuntimeConfiguration(args.Length > 0 ? args[0] : Local)).GetInstance<HelloREEF>().Run();
-        }
-
-        public class HDInsightTestCredential : IYarnRestClientCredential
-        {
-            private const string UserName = @"reefdev";
-            private const string Password = @"Coffee@@2015"; // TODO: Do not checkin!!!
-            private readonly ICredentials _credentials = new NetworkCredential(UserName, Password);
-
-            [Inject]
-            private HDInsightTestCredential()
-            {
-            }
-
-            public ICredentials Credentials
-            {
-                get { return _credentials; }
-            }
-        }
-
-        public class HDInsightRMUrlProvider : IUrlProvider
-        {
-            private const string HDInsightUrl = "https://reefdev.azurehdinsight.net/";
-
-            [Inject]
-            private HDInsightRMUrlProvider()
-            {
-            }
-
-            public Task<IEnumerable<Uri>> GetUrlAsync()
-            {
-                return Task.FromResult(Enumerable.Repeat(new Uri(HDInsightUrl), 1));
-            }
+            TangFactory.GetTang()
+                .NewInjector(GetRuntimeConfiguration(args.Length > 0 ? args[0] : Local))
+                .GetInstance<HelloREEF>()
+                .Run();
         }
     }
 }
