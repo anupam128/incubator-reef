@@ -30,9 +30,8 @@ namespace Org.Apache.REEF.Wake.Tests
 {
     public class StreamingRemoteManagerTest
     {
-        private readonly StreamingRemoteManagerFactory _remoteManagerFactory1 =
-            TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
-        
+        private static readonly IPAddress ListeningAddress = IPAddress.Parse("127.0.0.1");
+
         /// <summary>
         /// Tests one way communication between Remote Managers 
         /// Remote Manager listens on any available port
@@ -40,17 +39,16 @@ namespace Org.Apache.REEF.Wake.Tests
         [Fact]
         public void TestStreamingOneWayCommunication()
         {
-            IPAddress listeningAddress = IPAddress.Parse("127.0.0.1");
-
             BlockingCollection<string> queue = new BlockingCollection<string>();
             List<string> events = new List<string>();
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
-            using (var remoteManager1 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager2 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            StreamingRemoteManagerFactory remoteManagerFactory1 = TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
+            using (var remoteManager1 = remoteManagerFactory1.GetInstance<string>(ListeningAddress, codec))
+            using (var remoteManager2 = remoteManagerFactory1.GetInstance<string>(ListeningAddress, codec))
             {
                 var observer = Observer.Create<string>(queue.Add);
-                IPEndPoint endpoint1 = new IPEndPoint(listeningAddress, 0);
+                IPEndPoint endpoint1 = new IPEndPoint(ListeningAddress, 0);
                 remoteManager2.RegisterObserver(endpoint1, observer);
 
                 var remoteObserver = remoteManager1.GetRemoteObserver(remoteManager2.LocalEndpoint);
@@ -81,8 +79,9 @@ namespace Org.Apache.REEF.Wake.Tests
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
-            using (var remoteManager1 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager2 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            StreamingRemoteManagerFactory remoteManagerFactory1 = TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
+            using (var remoteManager1 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            using (var remoteManager2 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
             {
                 // Register observers for remote manager 1 and remote manager 2
                 var remoteEndpoint = new IPEndPoint(listeningAddress, 0);
@@ -131,9 +130,10 @@ namespace Org.Apache.REEF.Wake.Tests
             List<string> events = new List<string>();
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
-            using (var remoteManager1 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager2 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager3 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            StreamingRemoteManagerFactory remoteManagerFactory1 = TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
+            using (var remoteManager1 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            using (var remoteManager2 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            using (var remoteManager3 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
             {
                 var remoteEndpoint = new IPEndPoint(listeningAddress, 0);
                 var observer = Observer.Create<string>(queue.Add);
@@ -175,9 +175,10 @@ namespace Org.Apache.REEF.Wake.Tests
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
-            using (var remoteManager1 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager2 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager3 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            StreamingRemoteManagerFactory remoteManagerFactory1 = TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
+            using (var remoteManager1 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            using (var remoteManager2 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            using (var remoteManager3 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
             {
                 var remoteEndpoint = new IPEndPoint(listeningAddress, 0);
 
@@ -240,8 +241,9 @@ namespace Org.Apache.REEF.Wake.Tests
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
-            using (var remoteManager1 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager2 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            StreamingRemoteManagerFactory remoteManagerFactory1 = TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
+            using (var remoteManager1 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            using (var remoteManager2 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
             {
                 // Register handler for when remote manager 2 receives events; respond
                 // with an ack
@@ -286,8 +288,9 @@ namespace Org.Apache.REEF.Wake.Tests
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
-            using (var remoteManager1 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager2 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            StreamingRemoteManagerFactory remoteManagerFactory1 = TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
+            using (var remoteManager1 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            using (var remoteManager2 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
             {
                 // RemoteManager2 listens and records events of type IRemoteEvent<string>
                 var observer = Observer.Create<IRemoteMessage<string>>(message => queue.Add(message.Message));
@@ -320,8 +323,9 @@ namespace Org.Apache.REEF.Wake.Tests
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
-            using (var remoteManager1 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
-            using (var remoteManager2 = _remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            StreamingRemoteManagerFactory remoteManagerFactory1 = TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
+            using (var remoteManager1 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
+            using (var remoteManager2 = remoteManagerFactory1.GetInstance<string>(listeningAddress, codec))
             {
                 var observer = Observer.Create<string>(queue.Add);
                 IPEndPoint endpoint1 = new IPEndPoint(listeningAddress, 0);
