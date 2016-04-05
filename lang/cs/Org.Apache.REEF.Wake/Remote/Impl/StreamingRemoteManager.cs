@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Runtime.ExceptionServices;
 using Org.Apache.REEF.Wake.StreamingCodec;
 
 namespace Org.Apache.REEF.Wake.Remote.Impl
@@ -241,7 +242,7 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
 
             public void OnError(Exception error)
             {
-                throw error;
+                ExceptionDispatchInfo.Capture(error).Throw();
             }
 
             public void OnCompleted()

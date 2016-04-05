@@ -15,6 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
@@ -56,12 +57,11 @@ namespace Org.Apache.REEF.Wake.Tests
                 remoteObserver.OnNext("def");
                 remoteObserver.OnNext("ghi");
 
-                events.Add(queue.Take());
-                events.Add(queue.Take());
-                events.Add(queue.Take());
+                string output;
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
             }
-
-            Assert.Equal(3, events.Count);
         }
 
         /// <summary>
@@ -74,8 +74,6 @@ namespace Org.Apache.REEF.Wake.Tests
 
             BlockingCollection<string> queue1 = new BlockingCollection<string>();
             BlockingCollection<string> queue2 = new BlockingCollection<string>();
-            List<string> events1 = new List<string>();
-            List<string> events2 = new List<string>();
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
@@ -103,18 +101,16 @@ namespace Org.Apache.REEF.Wake.Tests
                 remoteObserver2.OnNext("pqr");
                 remoteObserver2.OnNext("stu");
 
-                events1.Add(queue1.Take());
-                events1.Add(queue1.Take());
-                events1.Add(queue1.Take());
-                events1.Add(queue1.Take());
+                string output;
+                Assert.True(queue1.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue1.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue1.TryTake(out output, TimeSpan.FromSeconds(10)));
 
-                events2.Add(queue2.Take());
-                events2.Add(queue2.Take());
-                events2.Add(queue2.Take());
+                Assert.True(queue2.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue2.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue2.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue2.TryTake(out output, TimeSpan.FromSeconds(10)));
             }
-
-            Assert.Equal(4, events1.Count);
-            Assert.Equal(3, events2.Count);
         }
 
         /// <summary>
@@ -127,7 +123,6 @@ namespace Org.Apache.REEF.Wake.Tests
             IPAddress listeningAddress = IPAddress.Parse("127.0.0.1");
 
             BlockingCollection<string> queue = new BlockingCollection<string>();
-            List<string> events = new List<string>();
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
             StreamingRemoteManagerFactory remoteManagerFactory1 = TangFactory.GetTang().NewInjector().GetInstance<StreamingRemoteManagerFactory>();
@@ -150,11 +145,10 @@ namespace Org.Apache.REEF.Wake.Tests
 
                 for (int i = 0; i < 5; i++)
                 {
-                    events.Add(queue.Take());
+                    string output;
+                    Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
                 }
             }
-
-            Assert.Equal(5, events.Count);
         }
 
         /// <summary>
@@ -169,9 +163,6 @@ namespace Org.Apache.REEF.Wake.Tests
             BlockingCollection<string> queue1 = new BlockingCollection<string>();
             BlockingCollection<string> queue2 = new BlockingCollection<string>();
             BlockingCollection<string> queue3 = new BlockingCollection<string>();
-            List<string> events1 = new List<string>();
-            List<string> events2 = new List<string>();
-            List<string> events3 = new List<string>();
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
@@ -208,24 +199,20 @@ namespace Org.Apache.REEF.Wake.Tests
                 remoteObserver3B.OnNext("jkl");
                 remoteObserver3B.OnNext("jkl");
                 remoteObserver3B.OnNext("jkl");
+                string output;
+                Assert.True(queue1.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue1.TryTake(out output, TimeSpan.FromSeconds(10)));
 
-                events1.Add(queue1.Take());
-                events1.Add(queue1.Take());
+                Assert.True(queue2.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue2.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue2.TryTake(out output, TimeSpan.FromSeconds(10)));
 
-                events2.Add(queue2.Take());
-                events2.Add(queue2.Take());
-                events2.Add(queue2.Take());
-
-                events3.Add(queue3.Take());
-                events3.Add(queue3.Take());
-                events3.Add(queue3.Take());
-                events3.Add(queue3.Take());
-                events3.Add(queue3.Take());
+                Assert.True(queue3.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue3.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue3.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue3.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue3.TryTake(out output, TimeSpan.FromSeconds(10)));
             }
-
-            Assert.Equal(2, events1.Count);
-            Assert.Equal(3, events2.Count);
-            Assert.Equal(5, events3.Count);
         }
 
         /// <summary>
@@ -264,9 +251,13 @@ namespace Org.Apache.REEF.Wake.Tests
                 remoteObserver1.OnNext("there");
                 remoteObserver1.OnNext("buddy");
 
-                events.Add(queue.Take());
-                events.Add(queue.Take());
-                events.Add(queue.Take());
+                string output;
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                events.Add(output);
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                events.Add(output);
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                events.Add(output);
             }
 
             Assert.Equal(3, events.Count);
@@ -284,7 +275,6 @@ namespace Org.Apache.REEF.Wake.Tests
             IPAddress listeningAddress = IPAddress.Parse("127.0.0.1");
 
             BlockingCollection<string> queue = new BlockingCollection<string>();
-            List<string> events = new List<string>();
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
@@ -302,12 +292,11 @@ namespace Org.Apache.REEF.Wake.Tests
                 remoteObserver.OnNext("def");
                 remoteObserver.OnNext("ghi");
 
-                events.Add(queue.Take());
-                events.Add(queue.Take());
-                events.Add(queue.Take());
+                string output;
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
             }
-
-            Assert.Equal(3, events.Count);
         }
 
         /// <summary>
@@ -319,7 +308,6 @@ namespace Org.Apache.REEF.Wake.Tests
             IPAddress listeningAddress = IPAddress.Parse("127.0.0.1");
 
             BlockingCollection<string> queue = new BlockingCollection<string>();
-            List<string> events = new List<string>();
 
             IStreamingCodec<string> codec = TangFactory.GetTang().NewInjector().GetInstance<StringStreamingCodec>();
 
@@ -339,13 +327,12 @@ namespace Org.Apache.REEF.Wake.Tests
                 cachedObserver.OnNext("ghi");
                 cachedObserver.OnNext("jkl");
 
-                events.Add(queue.Take());
-                events.Add(queue.Take());
-                events.Add(queue.Take());
-                events.Add(queue.Take());
+                string output;
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
+                Assert.True(queue.TryTake(out output, TimeSpan.FromSeconds(10)));
             }
-
-            Assert.Equal(4, events.Count);
         }
     }
 }
