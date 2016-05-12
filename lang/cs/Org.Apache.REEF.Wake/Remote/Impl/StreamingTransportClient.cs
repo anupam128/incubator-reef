@@ -31,11 +31,12 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
     /// <typeparam name="T">Generic Type of message.</typeparam>
     internal sealed class StreamingTransportClient<T> : IDisposable
     {
+        private static readonly Logger Logger = Logger.GetLogger(typeof(StreamingTransportClient<T>));
         private readonly ILink<T> _link;
         private readonly IObserver<TransportEvent<T>> _observer;
         private readonly CancellationTokenSource _cancellationSource;
+        private readonly Task _completion;
         private bool _disposed;
-        private static readonly Logger Logger = Logger.GetLogger(typeof(StreamingTransportClient<T>));
 
         /// <summary>
         /// Construct a TransportClient.
@@ -68,7 +69,7 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
             : this(remoteEndpoint, streamingCodec, clientFactory)
         {
             _observer = observer;
-            Task.Factory.StartNew(() => ResponseLoop(), TaskCreationOptions.LongRunning);
+            _completion = ResponseLoopAsync();
         }
 
         /// <summary>
@@ -100,6 +101,14 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
         {
             if (!_disposed)
             {
+                try
+                {
+                    _completion.Wait(TimeSpan.FromMilliseconds(500));
+                }
+                catch (Exception e)
+                {
+                    Exceptions.Caught(e, Level.Warning, "Response loop threw exception ", Logger);
+                }
                 _link.Dispose();
                 _disposed = true;
             }
@@ -108,7 +117,7 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
         /// <summary>
         /// Continually read responses from remote host
         /// </summary>
-        private async Task ResponseLoop()
+        private async Task ResponseLoopAsync()
         {
             while (!_cancellationSource.IsCancellationRequested)
             {

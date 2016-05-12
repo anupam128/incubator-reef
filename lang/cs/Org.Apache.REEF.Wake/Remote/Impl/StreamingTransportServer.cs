@@ -82,7 +82,7 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
         public void Run()
         {
             FindAPortAndStartListener();
-            _serverTask = Task.Factory.StartNew(() => StartServer(), TaskCreationOptions.LongRunning);
+            _serverTask = StartServerAsync();
         }
 
         private void FindAPortAndStartListener()
@@ -134,13 +134,11 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
                     // Give the TransportServer Task 500ms to shut down, ignore any timeout errors
                     try
                     {
-                        CancellationTokenSource serverDisposeTimeout = new CancellationTokenSource(500);
-                        _serverTask.Wait(serverDisposeTimeout.Token);
-                        _serverTask.Dispose();
+                        _serverTask.Wait(TimeSpan.FromMilliseconds(500));
                     }
                     catch (Exception e)
                     {
-                        Exceptions.Caught(e, Level.Warning, LOGGER);
+                        Exceptions.Caught(e.GetBaseException(), Level.Warning, LOGGER);
                     }
                 }
             }
@@ -153,13 +151,13 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
         /// be run in an asynchronous Task.
         /// </summary>
         /// <returns>An asynchronous Task for the running server.</returns>
-        private async Task StartServer()
+        private async Task StartServerAsync()
         {
             try
             {
                 while (!_cancellationSource.Token.IsCancellationRequested)
                 {
-                    TcpClient client = await _listener.AcceptTcpClientAsync().ConfigureAwait(false);
+                    TcpClient client = await _listener.AcceptTcpClientAsync();
                     ProcessClient(client).Forget();
                 }
             }

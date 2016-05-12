@@ -308,7 +308,7 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
         /// <returns>Task handler that reads string</returns>
         public async Task<string> ReadStringAsync(CancellationToken token)
         {
-            int length = ReadInt32();
+            int length = await ReadInt32Async(token);
 
             byte[] stringByte = new byte[length];
             int readBytes = await ReadAsync(stringByte, 0, stringByte.Length, token);

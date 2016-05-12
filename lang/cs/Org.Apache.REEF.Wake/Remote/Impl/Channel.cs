@@ -231,7 +231,7 @@ namespace Org.Apache.REEF.Wake.Remote.Impl
                 return 0;
             }
                 
-            byte[] msgLength = ReadBytes(sizeof(int));
+            byte[] msgLength = await ReadBytesAsync(sizeof(int), token);
             return (msgLength == null) ? 0 : BitConverter.ToInt32(msgLength, 0);
         }
 
